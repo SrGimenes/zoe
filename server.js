@@ -23,19 +23,22 @@ app.post("/Dialogflow", function (request, response) {
   connection.connect();
 
   var intentName = request.body.queryResult.intent.displayName;
-
-  if (intentName == 'AddContatos') {
+   
+  if(intentName == 'AddContatos'){ 
+    console.log('Adicionar Contato')
+     
     var NomeContato = request.body.queryResult.parameters['Nome'];
     var CPFContato = request.body.queryResult.parameters['CPF'];
-    var query =
-      'insert into cadastro values ("'+NomeContato+'","'+CPFContato+'")';
-
+    var query = 'insert into Cadastro values ("'+NomeContato+'","'+CPFContato+'")'; 
+     
     connection.query(query, function (error, results, fields) {
       if (error) throw error;
       connection.end();
-      response.json({ "fulfillmentText": "Cadastro realizado com sucesso" });
-    });
-  }
+      response.json({"fulfillmentText" :"Contato Adicionado com Sucesso!" }) 
+    });  
+} 
+
+  
 
   const agent = new WebhookClient({ request: request, response: response });
 
