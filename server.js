@@ -19,6 +19,7 @@ app.post("/webhook", function (request, response) {
     password: process.env.MYSQL_PASS,
     database: process.env.MYSQL_DB,
   });
+
   connection.connect();
 
   var intentName = request.body.queryResult.intent.displayName;
@@ -26,16 +27,24 @@ app.post("/webhook", function (request, response) {
   if (intentName == "AddContatos") {
     console.log("Adicionar Contato");
 
-    var NomeContato = request.body.queryResult.parameters["Nome"];
-    var CPFContato = request.body.queryResult.parameters["CPF"];
-    var query = 'insert into Cadastro values ("'+NomeContato +'","'+CPFContato +'")';
+    var NomeContato = connection.escape(request.body.queryResult.parameters["Nome"]);
+    var CPFContato = connection.escape(request.body.queryResult.parameters["CPF"]);
+    var query = 'INSERT INTO Cadastro (Nome, CPF) VALUES (' + NomeContato + ', ' + CPFContato + ')';
 
     connection.query(query, function (error, results, fields) {
-      if (error) throw error;
-      connection.end();
-      response.json({fulfillmentText: "Contato Adicionado com Sucesso!"});
+      if (error) {
+        console.error("Erro ao inserir no banco de dados:", error);
+        response.json({ fulfillmentText: "Erro ao adicionar o contato." });
+      } else {
+        console.log("Contato adicionado com sucesso.");
+        response.json({ fulfillmentText: "Contato adicionado com sucesso!" });
+      }
     });
+
+    connection.end(); // Feche a conexão após a execução da consulta.
   }
+});
+
 
   //const agent = new WebhookClient({ request: request, response: response });
 
