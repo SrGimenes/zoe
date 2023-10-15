@@ -21,6 +21,22 @@ app.post("/WEBHOOK", function (request, response) {
   });
   connection.connect();
   
+  var intentName = request.body.queryResult.intent.displayName;
+  
+  
+  if(intentName == 'AddContatos'){
+    
+    var NomeContato = request.body.queryResult.parameters['Nome'];
+    var CPFContato = request.body.queryResult.parameters['CPF'];
+    var query = 'insert into cadastro values ("'+NomeContato+'","'+CPFContato+'")';
+    
+    connection.query(query, function(erros, results, fields) {
+      if (erros) throw error;
+      connection.end();
+    })
+    
+  }
+  
   
   const agent = new WebhookClient({ request: request, response: response });
 
