@@ -11,7 +11,8 @@ app.use(express.static("public"));
 app.get("/", function (request, response) {
   response.sendFile(__dirname + "/views/index.html");
 });
-app.post("/webhook", function (request, response) {
+
+app.post("/Dialogflow", function (request, response) {
   
   var connection = mysql.createConnection({
     host: process.env.MYSQL_HOST,
@@ -27,11 +28,7 @@ app.post("/webhook", function (request, response) {
     var NomeContato = request.body.queryResult.parameters['Nome'];
     var CPFContato = request.body.queryResult.parameters['CPF'];
     var query =
-      'insert into cadastro values ("' +
-      NomeContato +
-      '","' +
-      CPFContato +
-      '")';
+      'insert into cadastro values ("'+NomeContato+'","'+CPFContato+'")';
 
     connection.query(query, function (error, results, fields) {
       if (error) throw error;
