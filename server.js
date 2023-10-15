@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const { WebhookClient } = require("dialogflow-fulfillment");
 const bodyParser = require("body-parser");
-const mysql = require ('mysql'); 
+const mysql = require("mysql");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -12,43 +12,40 @@ app.get("/", function (request, response) {
   response.sendFile(__dirname + "/views/index.html");
 });
 
-app.post("/Dialogflow", function (request, response) {
-  
+app.post("/webhook", function (request, response) {
   var connection = mysql.createConnection({
     host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASS,
-    database: process.env.MYSQL_DB 
-  }); 
+    database: process.env.MYSQL_DB,
+  });
   connection.connect();
 
   var intentName = request.body.queryResult.intent.displayName;
-   
-  if(intentName == 'AddContatos'){ 
-    console.log('Adicionar Contato')
-     
-    var NomeContato = request.body.queryResult.parameters['Nome'];
-    var CPFContato = request.body.queryResult.parameters['CPF'];
-    var query = 'insert into Cadastro values ("'+NomeContato+'","'+CPFContato+'")'; 
-     
+
+  if (intentName == "AddContatos") {
+    console.log("Adicionar Contato");
+
+    var NomeContato = request.body.queryResult.parameters["Nome"];
+    var CPFContato = request.body.queryResult.parameters["CPF"];
+    var query = 'insert into Cadastro values ("'+NomeContato +'","'+CPFContato +'")';
+
     connection.query(query, function (error, results, fields) {
       if (error) throw error;
       connection.end();
-      response.json({"fulfillmentText" :"Contato Adicionado com Sucesso!" }) 
-    });  
-} 
-
-  
-
-  const agent = new WebhookClient({ request: request, response: response });
-
-  let intentMap = new Map();
-  intentMap.set("Teste", FUNCTION);
-  agent.handleRequest(intentMap);
-
-  function FUNCTION(agent) {
-    agent.add("Isso é um teste");
+      response.json({fulfillmentText: "Contato Adicionado com Sucesso!"});
+    });
   }
+
+  //const agent = new WebhookClient({ request: request, response: response });
+
+  //let intentMap = new Map();
+  //intentMap.set("AddContatos", FUNCTION);
+  //agent.handleRequest(intentMap);
+
+  //function FUNCTION(agent) {
+  //  agent.add("Isso é um teste");
+  //}
 });
 
 const listener = app.listen(process.env.PORT, function () {
