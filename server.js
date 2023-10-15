@@ -22,9 +22,9 @@ app.post("/webhook", function (request, response) {
 
   var intentName = request.body.queryResult.intent.displayName;
 
-  if (intentName == "AddContatos") {
-    var NomeContato = request.body.queryResult.parameters["Nome"];
-    var CPFContato = request.body.queryResult.parameters["CPF"];
+  if (intentName == 'AddContatos') {
+    var NomeContato = request.body.queryResult.parameters['Nome'];
+    var CPFContato = request.body.queryResult.parameters['CPF'];
     var query =
       'insert into cadastro values ("' +
       NomeContato +
