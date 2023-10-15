@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const { WebhookClient } = require("dialogflow-fulfillment");
 const bodyParser = require("body-parser");
-const mysql = require('mysql');
+const mysql = require ('mysql'); 
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,7 +20,7 @@ app.post("/Dialogflow", function (request, response) {
     password: process.env.MYSQL_PASS,
     database: process.env.MYSQL_DB 
   }); 
-  connection.connect(); 
+  connection.connect();
 
   var intentName = request.body.queryResult.intent.displayName;
 
