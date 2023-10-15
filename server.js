@@ -18,7 +18,9 @@ app.post("/WEBHOOK", function (request, response) {
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASS,
     database: process.env.MYSQL_DB
-  })
+  });
+  connection.connect();
+  
   
   const agent = new WebhookClient({ request: request, response: response });
 
