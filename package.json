@@ -15,8 +15,7 @@
     "dialogflow-fulfillment": "^0.6.1",
     "actions-on-google": "^3.0.0",
     "mysql": "^2.18.1",
-    "axios": "^1.5.1",
-    "firebase-functions": "^4.4.1"
+    "axios": "^1.5.1"
   },
   "engines": {
     "node": "14.x"
