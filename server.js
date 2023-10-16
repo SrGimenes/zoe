@@ -3,6 +3,7 @@ const app = express();
 const { WebhookClient } = require("dialogflow-fulfillment");
 const bodyParser = require("body-parser");
 const mysql = require("mysql");
+const functions = require('firebase-functions');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -12,11 +13,25 @@ app.get("/", function (request, response) {
   response.sendFile(__dirname + "/views/index.html");
 });
 
-const agente = ({request, response})
+const agente = WebhookClient ({ request, response })
 
-function formatarCPF(CPFContato){
+function validarCPF(CPFContato){
+  const cpf = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+  const userInput = agent.parameters;
   
+  if(cpf.test(UserInput))
 }
+
+  function validarCPF(agent) {
+  	const cpf = 
+    const userInput = agent.parameters.cpf;
+    
+    if(cpf.test(userInput)) {
+    	agent.add("CPF válido. O que mais posso fazer por você?");
+    } else {
+    agent.add("Por favor, insira um CPF válido no formato xxx.xxx.xxx-xx.");
+  	}
+  }
 
 app.post("/webhook", function (request, response) {
   var connection = mysql.createConnection({
