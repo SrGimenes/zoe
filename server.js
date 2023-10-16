@@ -12,15 +12,15 @@ app.get("/", function (request, response) {
   response.sendFile(__dirname + "/views/index.html");
 });
 
+// Importe a função de validação
 function validarCPF(agent) {
   const cpfPattern = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
-  const userInput = agent.parameters.cpf;
+  const userInput = agent.parameters.CPF;
 
   if (cpfPattern.test(userInput)) {
-    agent.add("CPF válido. O que mais posso fazer por você?");
-  } else {
-    agent.add("Por favor, insira um CPF válido no formato xxx.xxx.xxx-xx.");
+    return true;
   }
+  return false;
 }
 
 app.post("/webhook", function (request, response) {
@@ -38,21 +38,23 @@ app.post("/webhook", function (request, response) {
   if (intentName == "Usuario") {
     console.log("Adicionar Contato");
 
-    var isCPFValid = 
-    
-    var NomeContato = connection.escape(
-      request.body.queryResult.parameters["Nome"]
-    );
-    var CPFContato = connection.escape(
-      request.body.queryResult.parameters["CPF"]
-    );
+    // Validação do CPF
+    var isCPFValid = validarCPF(request.body.queryResult);
+
+    if (!isCPFValid) {
+      response.json({
+        fulfillmentText:
+          "Por favor, insira um CPF válido no formato xxx.xxx.xxx-xx.",
+      });
+      connection.end(); // Feche a conexão após a resposta.
+      return;
+    }
+
+    var NomeContato = connection.escape(request.body.queryResult.parameters["Nome"]);
+    var CPFContato = connection.escape(request.body.queryResult.parameters["CPF"]);
 
     var query =
-      "INSERT INTO Cadastro (Nome, CPF) VALUES (" +
-      NomeContato +
-      ", " +
-      CPFContato +
-      ")";
+      "INSERT INTO Cadastro (Nome, CPF) VALUES (" + NomeContato + ", " + CPFContato + ")";
 
     connection.query(query, function (error, results, fields) {
       if (error) {
@@ -65,11 +67,11 @@ app.post("/webhook", function (request, response) {
         console.log("Usuário cadastrado com sucesso.");
         response.json({ fulfillmentText: "Usuário cadastrado com sucesso!" });
       }
+      connection.end(); // Feche a conexão após a execução da consulta.
     });
-
-    connection.end(); // Feche a conexão após a execução da consulta.
   }
 });
+
 
 const listener = app.listen(process.env.PORT, function () {
   console.log("Your app is listening on port " + listener.address().port);
