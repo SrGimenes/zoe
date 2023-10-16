@@ -12,6 +12,12 @@ app.get("/", function (request, response) {
   response.sendFile(__dirname + "/views/index.html");
 });
 
+const agente = ({request, response})
+
+function formatarCPF(CPFContato){
+  
+}
+
 app.post("/webhook", function (request, response) {
   var connection = mysql.createConnection({
     host: process.env.MYSQL_HOST,
