@@ -40,7 +40,7 @@ app.post("/webhook", function (req, res) {
       .replace(/(\d{3})(\d{1,2})$/, "$1-$2"); // Coloca hífen entre o nono e o décimo primeiro dígitos
   }
 
-  if (intentName === "Usuario") {
+  if (intentName === "Default Welcome Intent - yes - yes - yes - yes - next") {
     const NomeContato = connection.escape(
       req.body.queryResult.parameters["Nome"]
     );
