@@ -44,13 +44,12 @@ app.post("/webhook", function (req, res) {
     const NomeContato = connection.escape(
       req.body.queryResult.parameters["Nome"]
     );
-    let CPFContato = connection.escape(
-      req.body.queryResult.parameters["CPF"]
-    );
+    const CPFContato = formatarCPF(req.body.queryResult.parameters["CPF"]);
 
-    const CPFFormatado = formatarCPF(CPFContato);
 
-    const queryVerificarCPF = `SELECT CPF FROM Cadastro WHERE CPF = ${CPFFormatado}`;
+
+
+    const queryVerificarCPF = `SELECT CPF FROM Cadastro WHERE CPF = ${CPFContato}`;
 
     connection.query(queryVerificarCPF, function (error, results, fields) {
       if (error) {
