@@ -13,25 +13,23 @@ app.get("/", function (request, response) {
   response.sendFile(__dirname + "/views/index.html");
 });
 
-const agente = WebhookClient ({ request, response })
-
-function validarCPF(CPFContato){
-  const cpf = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
-  const userInput = agent.parameters;
+exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, response) => ({
+  const agent = new WebhookClient({ request, response });
   
-  if(cpf.test(UserInput))
+  function validarCPF(CPFContato){
+  const cpf = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+  const userInput = agent.parameters.CPF;
+  
+  if(cpf.test(UserInput)){
+    agent.add("CPF válido. O que mais posso fazer por você?");
+  }else{
+    agent.add("Por favor, insira um CPF válido no formato xxx.xxx.xxx-xx.");
+  }
 }
 
-  function validarCPF(agent) {
-  	const cpf = 
-    const userInput = agent.parameters.cpf;
-    
-    if(cpf.test(userInput)) {
-    	agent.add("CPF válido. O que mais posso fazer por você?");
-    } else {
-    agent.add("Por favor, insira um CPF válido no formato xxx.xxx.xxx-xx.");
-  	}
-  }
+});
+  
+
 
 app.post("/webhook", function (request, response) {
   var connection = mysql.createConnection({
@@ -60,7 +58,10 @@ app.post("/webhook", function (request, response) {
       "SELECT CPF FROM Cadastro WHERE CPF = " + CPFContato;
 
     connection.query(queryVerificarCPF, function (error, results, fields) {
-      if (error) {
+      
+      if(CPFContato == !validarCPF){
+        agent.add("Por favor, insira um CPF válido no formato xxx.xxx.xxx-xx.");
+      }else if (error) {
         console.error("Erro ao verificar o CPF no banco de dados:", error);
         response.json({
           fulfillmentText:
