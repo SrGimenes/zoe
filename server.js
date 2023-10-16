@@ -31,21 +31,21 @@ app.post("/webhook", function (req, res) {
 
   function formatarCPF(cpf) {
     return cpf
-      .replace(/\D/g, '') // Remove tudo que não é dígito
-      .replace(/(\d{3})(\d)/, '$1.$2') // Coloca ponto entre o terceiro e o quarto dígitos
-      .replace(/(\d{3})(\d)/, '$1.$2') // Coloca ponto entre o sexto e o sétimo dígitos
-      .replace(/(\d{3})(\d{1,2})$/, '$1-$2'); // Coloca hífen entre o nono e o décimo primeiro dígitos
+      .replace(/\D/g, "") // Remove tudo que não é dígito
+      .replace(/(\d{3})(\d)/, "$1.$2") // Coloca ponto entre o terceiro e o quarto dígitos
+      .replace(/(\d{3})(\d)/, "$1.$2") // Coloca ponto entre o sexto e o sétimo dígitos
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2"); // Coloca hífen entre o nono e o décimo primeiro dígitos
   }
 
   if (intentName === "Usuario") {
     const NomeContato = connection.escape(
       req.body.queryResult.parameters["Nome"]
     );
-    const CPFContato = connection.escape(
+    let CPFContato = connection.escape(
       req.body.queryResult.parameters["CPF"]
     );
-    
-    CPFContato = formatarCPF(CPFContato)
+
+    CPFContato = formatarCPF(CPFContato);
 
     const queryVerificarCPF = `SELECT CPF FROM Cadastro WHERE CPF = ${CPFContato}`;
 
