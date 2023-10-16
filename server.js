@@ -18,7 +18,6 @@ app.post("/webhook", function (req, res) {
     res.send(408);
   });
 
-  const agent = new WebhookClient({ request: req, response: res });
   const connection = mysql.createConnection({
     host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
@@ -30,14 +29,12 @@ app.post("/webhook", function (req, res) {
 
   const intentName = req.body.queryResult.intent.displayName;
 
-  function validarCPF(agent) {
-    const cpf = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
-    const userInput = agent.parameters.CPF;
-    if (cpf.test(userInput)) {
-      return true;
-    } else {
-      return false;
-    }
+  function formatarCPF(cpf) {
+    return cpf
+      .replace(/\D/g, '') // Remove tudo que não é dígito
+      .replace(/(\d{3})(\d)/, '$1.$2') // Coloca ponto entre o terceiro e o quarto dígitos
+      .replace(/(\d{3})(\d)/, '$1.$2') // Coloca ponto entre o sexto e o sétimo dígitos
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2'); // Coloca hífen entre o nono e o décimo primeiro dígitos
   }
 
   if (intentName === "Usuario") {
@@ -48,15 +45,7 @@ app.post("/webhook", function (req, res) {
       req.body.queryResult.parameters["CPF"]
     );
     
-    const userInput = agent.parameters.CPF;
-    
-    if (!validarCPF(userInput)) {
-      agent.add("Por favor, insira um CPF válido no formato xxx.xxx.xxx-xx.");
-      return res.json({
-        fulfillmentText:
-          "Por favor, insira um CPF válido no formato xxx.xxx.xxx-xx.",
-      });
-    }
+    CPFContato = formatarCPF(CPFContato)
 
     const queryVerificarCPF = `SELECT CPF FROM Cadastro WHERE CPF = ${CPFContato}`;
 
