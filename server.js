@@ -45,7 +45,7 @@ app.post("/webhook", function (req, res) {
       req.body.queryResult.parameters["CPF"]
     );
 
-    const CPFFormatado = formatarCPF(CPFContato);
+    let CPFFormatado = formatarCPF(CPFContato);
 
     const queryVerificarCPF = `SELECT CPF FROM Cadastro WHERE CPF = ${CPFFormatado}`;
 
