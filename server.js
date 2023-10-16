@@ -17,17 +17,15 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, resp
   const agent = new WebhookClient({ request, response });
   
   function validarCPF(CPFContato){
-  const cpf = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
-  const userInput = agent.parameters.CPF;
+    const cpf = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+    const userInput = agent.parameters.CPF;
   
-  if(cpf.test(UserInput)){
-    agent.add("CPF válido. O que mais posso fazer por você?");
-  }else{
-    agent.add("Por favor, insira um CPF válido no formato xxx.xxx.xxx-xx.");
+    if(cpf.test(userInput)){
+      agent.add("CPF válido. O que mais posso fazer por você?");
+    }else{
+      agent.add("Por favor, insira um CPF válido no formato xxx.xxx.xxx-xx.");
+    }
   }
-}
-
-});
   
 
 
@@ -103,6 +101,7 @@ app.post("/webhook", function (request, response) {
   }
 });
 
-const listener = app.listen(process.env.PORT, function () {
-  console.log("Your app is listening on port " + listener.address().port);
+  const listener = app.listen(process.env.PORT, function () {
+    console.log("Your app is listening on port " + listener.address().port);
+  });
 });
