@@ -13,6 +13,11 @@ app.get("/", function (request, response) {
 });
 
 app.post("/webhook", function (req, res) {
+  res.setTimeout(500000, function () {
+    console.log("Request has timed out.");
+    res.send(408);
+  });
+
   const agent = new WebhookClient({ request: req, response: res });
   const connection = mysql.createConnection({
     host: process.env.MYSQL_HOST,
@@ -34,6 +39,10 @@ app.post("/webhook", function (req, res) {
       return false;
     }
   }
+
+  module.exports = {
+    validarCPF: validarCPF,
+  };
 
   if (intentName === "Usuario") {
     const NomeContato = connection.escape(
@@ -87,6 +96,10 @@ app.post("/webhook", function (req, res) {
       connection.end(); // Feche a conexão após a execução da consulta.
     });
   }
+  
+  let intentMap = new Map();
+  intentMap.set('Usuario', validarCPF);
+  agent.handleRequest(intentMap);
 });
 
 const listener = app.listen(process.env.PORT, function () {
