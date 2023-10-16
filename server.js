@@ -40,10 +40,6 @@ app.post("/webhook", function (req, res) {
     }
   }
 
-  module.exports = {
-    validarCPF: validarCPF,
-  };
-
   if (intentName === "Usuario") {
     const NomeContato = connection.escape(
       req.body.queryResult.parameters["Nome"]
@@ -52,7 +48,7 @@ app.post("/webhook", function (req, res) {
       req.body.queryResult.parameters["CPF"]
     );
     
-     const userInput = agent.parameters.CPF;
+    const userInput = agent.parameters.CPF;
     
     if (!validarCPF(userInput)) {
       agent.add("Por favor, insira um CPF válido no formato xxx.xxx.xxx-xx.");
