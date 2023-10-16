@@ -46,7 +46,7 @@ app.post("/webhook", function (request, response) {
 
   function validarCPF(CPFContato) {
     const cpf = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
-    const userInput = CPFContato.replace(/[]/g,); // remova as aspas da string
+    const userInput = CPFContato.replace(/["']/g,""); // remova as aspas da string
 
     if (cpf.test(userInput)) {
       return true;
