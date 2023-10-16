@@ -25,7 +25,7 @@ app.post("/webhook", function (request, response) {
 
   var intentName = request.body.queryResult.intent.displayName;
 
-  if (intentName == "AddContatos") {
+  if (intentName == "Usuario") {
     console.log("Adicionar Contato");
 
     var NomeContato = connection.escape(
@@ -44,10 +44,10 @@ app.post("/webhook", function (request, response) {
     connection.query(query, function (error, results, fields) {
       if (error) {
         console.error("Erro ao inserir no banco de dados:", error);
-        response.json({ fulfillmentText: "Erro ao adicionar o contato." });
+        response.json({ fulfillmentText: "Erro ao cadastrar o usuário, por favor entre em contato com os desenvolvedores." });
       } else {
-        console.log("Contato adicionado com sucesso.");
-        response.json({ fulfillmentText: "Contato adicionado com sucesso!" });
+        console.log("Usuário cadastrado com sucesso.");
+        response.json({ fulfillmentText: "Usuário cadastrado com sucesso!" });
       }
     });
 
