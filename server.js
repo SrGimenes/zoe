@@ -30,7 +30,7 @@ app.post("/webhook", function (req, res) {
 
   const intentName = req.body.queryResult.intent.displayName;
 
-  function validarCPF(CPFContato) {
+  function validarCPF(agent) {
     const cpf = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
     const userInput = agent.parameters.CPF;
     if (cpf.test(userInput)) {
@@ -51,8 +51,10 @@ app.post("/webhook", function (req, res) {
     const CPFContato = connection.escape(
       req.body.queryResult.parameters["CPF"]
     );
-
-    if (!validarCPF(CPFContato)) {
+    
+     const userInput = agent.parameters.CPF;
+    
+    if (!validarCPF(userInput)) {
       agent.add("Por favor, insira um CPF válido no formato xxx.xxx.xxx-xx.");
       return res.json({
         fulfillmentText:
@@ -96,10 +98,6 @@ app.post("/webhook", function (req, res) {
       connection.end(); // Feche a conexão após a execução da consulta.
     });
   }
-  
-  /*let intentMap = new Map();
-  intentMap.set("Usuario", validarCPF);
-  agent.handleRequest(intentMap);*/
 });
 
 const listener = app.listen(process.env.PORT, function () {
