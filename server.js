@@ -8,9 +8,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-
-
-
 app.get("/", function (request, response) {
   response.sendFile(__dirname + "/views/index.html");
 });
@@ -44,12 +41,13 @@ app.post("/webhook", function (req, res) {
     const NomeContato = connection.escape(
       req.body.queryResult.parameters["Nome"]
     );
-    const CPFContato = formatarCPF(req.body.queryResult.parameters["CPF"]);
+    let CPFContato = connection.escape(
+      req.body.queryResult.parameters["CPF"]
+    );
 
+    const CPFFormatado = formatarCPF(CPFContato);
 
-
-
-    const queryVerificarCPF = `SELECT CPF FROM Cadastro WHERE CPF = ${CPFContato}`;
+    const queryVerificarCPF = `SELECT CPF FROM Cadastro WHERE CPF = ${CPFFormatado}`;
 
     connection.query(queryVerificarCPF, function (error, results, fields) {
       if (error) {
