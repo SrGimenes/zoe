@@ -97,9 +97,9 @@ app.post("/webhook", function (req, res) {
     });
   }
   
-  let intentMap = new Map();
-  intentMap.set('Usuario', validarCPF);
-  agent.handleRequest(intentMap);
+  /*let intentMap = new Map();
+  intentMap.set("Usuario", validarCPF);
+  agent.handleRequest(intentMap);*/
 });
 
 const listener = app.listen(process.env.PORT, function () {
