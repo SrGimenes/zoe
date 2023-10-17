@@ -48,7 +48,7 @@ app.post("/webhook", function (req, res) {
 
     let CPFFormatado = validarCPF(CPFContato);
 
-    const queryVerificarCPF = `SELECT CPF FROM Cadastro WHERE CPF = `;
+    const queryVerificarCPF = `SELECT CPF FROM Cadastro WHERE CPF = ?`;
 
     connection.query(queryVerificarCPF, [CPFFormatado], function (
       error,
@@ -67,7 +67,7 @@ app.post("/webhook", function (req, res) {
             fulfillmentText: "CPF já cadastrado na base de dados.",
           });
         } else {
-          const query = `INSERT INTO Cadastro (Nome, CPF) VALUES (${NomeContato}, ${CPFContato})`;
+          const query = `INSERT INTO Cadastro (Nome, CPF) VALUES (?, ?)`;
 
           connection.query(query, [NomeContato, CPFFormatado], function (
             error,
