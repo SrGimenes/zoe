@@ -62,7 +62,7 @@ app.post("/webhook", function (req, res) {
             fulfillmentText: "CPF já cadastrado na base de dados.",
           });
         } else {
-          const query = `INSERT INTO Cadastro (Nome, CPF) VALUES (?, ?)`;
+          const query = `INSERT INTO Cadastro (Nome, CPF) VALUES (${NomeContato}, ${CPFContato})`;
 
           connection.query(query, [NomeContato, CPFFormatado], function (
             error,
