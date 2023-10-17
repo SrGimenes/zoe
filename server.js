@@ -31,7 +31,7 @@ app.post("/webhook", function (req, res) {
 
   function formatarCPF(cpf) {
     return cpf
-      .replace(/\D/g, "") // Remove tudo que não é dígito
+      //.replace(/\D/g, "") // Remove tudo que não é dígito
       .replace(/(\d{3})(\d)/, "$1.$2") // Coloca ponto entre o terceiro e o quarto dígitos
       .replace(/(\d{3})(\d)/, "$1.$2") // Coloca ponto entre o sexto e o sétimo dígitos
       .replace(/(\d{3})(\d{1,2})$/, "$1-$2"); // Coloca hífen entre o nono e o décimo primeiro dígitos
@@ -43,7 +43,7 @@ app.post("/webhook", function (req, res) {
 
     let CPFFormatado = formatarCPF(CPFContato);
 
-    const queryVerificarCPF = `SELECT CPF FROM Cadastro WHERE CPF = ?`;
+    const queryVerificarCPF = `SELECT CPF FROM Cadastro WHERE CPF`;
 
     connection.query(queryVerificarCPF, [CPFFormatado], function (
       error,
