@@ -29,21 +29,26 @@ app.post("/webhook", function (req, res) {
 
   const intentName = req.body.queryResult.intent.displayName;
 
-  function formatarCPF(cpf) {
+  /*function formatarCPF(cpf) {
     return cpf
       //.replace(/\D/g, "") // Remove tudo que não é dígito
       .replace(/(\d{3})(\d)/, "$1.$2") // Coloca ponto entre o terceiro e o quarto dígitos
       .replace(/(\d{3})(\d)/, "$1.$2") // Coloca ponto entre o sexto e o sétimo dígitos
       .replace(/(\d{3})(\d{1,2})$/, "$1-$2"); // Coloca hífen entre o nono e o décimo primeiro dígitos
+  }*/
+  
+  function validarCPF(CPF){
+    const re = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+    return re.test(CPF);
   }
 
   if (intentName === "Default Welcome Intent - yes - yes - yes - yes - next") {
     const NomeContato = req.body.queryResult.parameters["Nome"];
     let CPFContato = req.body.queryResult.parameters["CPF"];
 
-    let CPFFormatado = formatarCPF(CPFContato);
+    let CPFFormatado = validarCPF(CPFContato);
 
-    const queryVerificarCPF = `SELECT CPF FROM Cadastro WHERE CPF`;
+    const queryVerificarCPF = `SELECT CPF FROM Cadastro WHERE CPF = `;
 
     connection.query(queryVerificarCPF, [CPFFormatado], function (
       error,
