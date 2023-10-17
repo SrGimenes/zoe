@@ -29,36 +29,15 @@ app.post("/webhook", function (req, res) {
 
   const intentName = req.body.queryResult.intent.displayName;
 
-/*function formatarCPF(CPF) {
-    const numerosCPF = CPF.replace(/\D/g, "");
-    if (numerosCPF !== 11) {
-      throw new Error(
-        "CPF inválido. Certifique-se de inserir os 11 dígitos do CPF."
-      );
-      return res.json({
-        fulfillmentText: "CPF inválido. Certifique-se de inserir os 11 dígitos do CPF."
-      });
-    }
-    return numerosCPF
-      
-        // Remove tudo que não é dígito
-        .replace(/(\d{3})(\d)/, "$1.$2") // Coloca ponto entre o terceiro e o quarto dígitos
-        .replace(/(\d{3})(\d)/, "$1.$2") // Coloca ponto entre o sexto e o sétimo dígitos
-        .replace(/(\d{3})(\d{1,2})$/, "$1-$2") // Coloca hífen entre o nono e o décimo primeiro dígitos
-  }*/
-  
-function formatarCPF(CPF) {
-  const numerosCPF = CPF.replace(/\D/g, ""); // Remover tudo que não é dígito
-  if (numerosCPF.length !== 11) {
-    throw new Error("CPF inválido. Certifique-se de inserir os 11 dígitos do CPF.");
+  function formatarCPF(CPF) {
+    return CPF.replace(/\D/g, "") // Remove tudo que não é dígito
+      .replace(/(\d{3})(\d)/, "$1.$2") // Coloca ponto entre o terceiro e o quarto dígitos
+      .replace(/(\d{3})(\d)/, "$1.$2") // Coloca ponto entre o sexto e o sétimo dígitos
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2"); // Coloca hífen entre o nono e o décimo primeiro dígitos
   }
-  return numerosCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
-}
 
   if (intentName === "Default Welcome Intent - yes - yes - yes - yes - next") {
-    
     const NomeContato = req.body.queryResult.parameters["Nome"];
-    
     let CPFContato = req.body.queryResult.parameters["CPF"];
 
     let CPFFormatado = formatarCPF(CPFContato);
