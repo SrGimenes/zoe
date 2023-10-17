@@ -29,24 +29,19 @@ app.post("/webhook", function (req, res) {
 
   const intentName = req.body.queryResult.intent.displayName;
 
-  /*function formatarCPF(cpf) {
-    return cpf
+  function formatarCPF(CPF) {
+    return CPF
       //.replace(/\D/g, "") // Remove tudo que não é dígito
       .replace(/(\d{3})(\d)/, "$1.$2") // Coloca ponto entre o terceiro e o quarto dígitos
       .replace(/(\d{3})(\d)/, "$1.$2") // Coloca ponto entre o sexto e o sétimo dígitos
       .replace(/(\d{3})(\d{1,2})$/, "$1-$2"); // Coloca hífen entre o nono e o décimo primeiro dígitos
-  }*/
-  
-  function validarCPF(CPF){
-    const re = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
-    return re.test(CPF);
   }
-
+  
   if (intentName === "Default Welcome Intent - yes - yes - yes - yes - next") {
     const NomeContato = req.body.queryResult.parameters["Nome"];
     let CPFContato = req.body.queryResult.parameters["CPF"];
 
-    let CPFFormatado = validarCPF(CPFContato);
+    let CPFFormatado = formatarCPF(CPFContato);
 
     const queryVerificarCPF = `SELECT CPF FROM Cadastro WHERE CPF = ?`;
 
@@ -67,6 +62,7 @@ app.post("/webhook", function (req, res) {
             fulfillmentText: "CPF já cadastrado na base de dados.",
           });
         } else {
+
           const query = `INSERT INTO Cadastro (Nome, CPF) VALUES (?, ?)`;
 
           connection.query(query, [NomeContato, CPFFormatado], function (
