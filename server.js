@@ -38,18 +38,18 @@ app.post("/webhook", function (req, res) {
   }
 
   if (intentName === "Default Welcome Intent - yes - yes - yes - yes - next") {
-    const NomeContato = connection.escape(
-      req.body.queryResult.parameters["Nome"]
-    );
-    let CPFContato = connection.escape(
-      req.body.queryResult.parameters["CPF"]
-    );
+    const NomeContato = req.body.queryResult.parameters["Nome"];
+    let CPFContato = req.body.queryResult.parameters["CPF"];
 
     let CPFFormatado = formatarCPF(CPFContato);
 
-    const queryVerificarCPF = `SELECT CPF FROM Cadastro WHERE CPF = ${CPFFormatado}`;
+    const queryVerificarCPF = `SELECT CPF FROM Cadastro WHERE CPF = ?`;
 
-    connection.query(queryVerificarCPF, function (error, results, fields) {
+    connection.query(queryVerificarCPF, [CPFFormatado], function (
+      error,
+      results,
+      fields
+    ) {
       if (error) {
         console.error("Erro ao verificar o CPF no banco de dados:", error);
         return res.json({
@@ -62,9 +62,13 @@ app.post("/webhook", function (req, res) {
             fulfillmentText: "CPF já cadastrado na base de dados.",
           });
         } else {
-          const query = `INSERT INTO Cadastro (Nome, CPF) VALUES (${NomeContato}, ${CPFContato})`;
+          const query = `INSERT INTO Cadastro (Nome, CPF) VALUES (?, ?)`;
 
-          connection.query(query, function (error, results, fields) {
+          connection.query(query, [NomeContato, CPFFormatado], function (
+            error,
+            results,
+            fields
+          ) {
             if (error) {
               console.error("Erro ao inserir no banco de dados:", error);
               return res.json({
