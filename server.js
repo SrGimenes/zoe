@@ -30,63 +30,71 @@ app.post("/webhook", function (req, res) {
   const intentName = req.body.queryResult.intent.displayName;
 
   function formatarCPF(CPF) {
-    return CPF
-      //.replace(/\D/g, "") // Remove tudo que não é dígito
-      .replace(/(\d{3})(\d)/, "$1.$2") // Coloca ponto entre o terceiro e o quarto dígitos
-      .replace(/(\d{3})(\d)/, "$1.$2") // Coloca ponto entre o sexto e o sétimo dígitos
-      .replace(/(\d{3})(\d{1,2})$/, "$1-$2"); // Coloca hífen entre o nono e o décimo primeiro dígitos
+    const numerosCPF = CPF.replace(/\D/g, "");
+    if (numerosCPF !== 11) {
+      throw new Error(
+        "CPF inválido. Certifique-se de inserir os 11 dígitos do CPF."
+      );
+    }
+    return numerosCPF
+      
+        // Remove tudo que não é dígito
+        .replace(/(\d{3})(\d)/, "$1.$2") // Coloca ponto entre o terceiro e o quarto dígitos
+        .replace(/(\d{3})(\d)/, "$1.$2") // Coloca ponto entre o sexto e o sétimo dígitos
+        .replace(/(\d{3})(\d{1,2})$/, "$1-$2") // Coloca hífen entre o nono e o décimo primeiro dígitos
   }
-  
+
   if (intentName === "Default Welcome Intent - yes - yes - yes - yes - next") {
+    
     const NomeContato = req.body.queryResult.parameters["Nome"];
+    
     let CPFContato = req.body.queryResult.parameters["CPF"];
 
     let CPFFormatado = formatarCPF(CPFContato);
 
     const queryVerificarCPF = `SELECT CPF FROM Cadastro WHERE CPF = ?`;
 
-    connection.query(queryVerificarCPF, [CPFFormatado], function (
-      error,
-      results,
-      fields
-    ) {
-      if (error) {
-        console.error("Erro ao verificar o CPF no banco de dados:", error);
-        return res.json({
-          fulfillmentText:
-            "Erro ao verificar o CPF, por favor entre em contato com os desenvolvedores.",
-        });
-      } else {
-        if (results.length > 0) {
+    connection.query(
+      queryVerificarCPF,
+      [CPFFormatado],
+      function (error, results, fields) {
+        if (error) {
+          console.error("Erro ao verificar o CPF no banco de dados:", error);
           return res.json({
-            fulfillmentText: "CPF já cadastrado na base de dados.",
+            fulfillmentText:
+              "Erro ao verificar o CPF, por favor entre em contato com os desenvolvedores.",
           });
         } else {
+          if (results.length > 0) {
+            return res.json({
+              fulfillmentText: "CPF já cadastrado na base de dados.",
+            });
+          } else {
+            const query = `INSERT INTO Cadastro (Nome, CPF) VALUES (?, ?)`;
 
-          const query = `INSERT INTO Cadastro (Nome, CPF) VALUES (?, ?)`;
-
-          connection.query(query, [NomeContato, CPFFormatado], function (
-            error,
-            results,
-            fields
-          ) {
-            if (error) {
-              console.error("Erro ao inserir no banco de dados:", error);
-              return res.json({
-                fulfillmentText:
-                  "Erro ao cadastrar o usuário, por favor entre em contato com os desenvolvedores.",
-              });
-            } else {
-              console.log("Usuário cadastrado com sucesso.");
-              return res.json({
-                fulfillmentText: "Usuário cadastrado com sucesso!",
-              });
-            }
-          });
+            connection.query(
+              query,
+              [NomeContato, CPFFormatado],
+              function (error, results, fields) {
+                if (error) {
+                  console.error("Erro ao inserir no banco de dados:", error);
+                  return res.json({
+                    fulfillmentText:
+                      "Erro ao cadastrar o usuário, por favor entre em contato com os desenvolvedores.",
+                  });
+                } else {
+                  console.log("Usuário cadastrado com sucesso.");
+                  return res.json({
+                    fulfillmentText: "Usuário cadastrado com sucesso!",
+                  });
+                }
+              }
+            );
+          }
         }
+        connection.end(); // Feche a conexão após a execução da consulta.
       }
-      connection.end(); // Feche a conexão após a execução da consulta.
-    });
+    );
   }
 });
 
