@@ -82,7 +82,7 @@ app.post("/webhook", function (req, res) {
             );
           }
         }
-        connection.end(); // Feche a conexão após a execução da consulta.
+        connection.end();
       }
     );
   }
