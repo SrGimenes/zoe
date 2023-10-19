@@ -39,6 +39,7 @@ app.post("/webhook", function (req, res) {
     })
     .refine((cpf) => !/[a-zA-Z]/.test(cpf), {
       message: 'CPF inválido. Não deve conter letras.',
+      fulfillmentText: 'CPF inválido. Não deve conter letras.',
     });
 
   if (intentName === "Default Welcome Intent - yes - yes - yes - yes - next") {
@@ -106,7 +107,7 @@ app.post("/webhook", function (req, res) {
     } catch (error) {
       console.error('CPF inválido:', error.message);
       return res.json({
-        fulfillmentText: `CPF inválido: ${error.message}. Por favor, tente novamente.`,
+        fulfillmentText: `CPF inválido! ${error.message},Por favor, tente novamente.`,
       });
     }
   }
