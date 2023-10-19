@@ -6,12 +6,15 @@ const mysql = require("mysql");
 const { z } = require('zod');
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true });
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 app.get("/", function (request, response) {
   response.sendFile(__dirname + "/views/index.html");
 });
+
+const maxRetries = 2; // Número máximo de tentativas
+const userRetries = new Map(); // Mapa para rastrear as tentativas do usuário
 
 app.post("/webhook", function (req, res) {
   res.setTimeout(500000, function () {
@@ -47,6 +50,18 @@ app.post("/webhook", function (req, res) {
 
       const queryVerificarCPF = `SELECT CPF FROM Cadastro WHERE CPF = ?`;
 
+      if (userRetries.has(NomeContato)) {
+        userRetries.set(NomeContato, userRetries.get(NomeContato) + 1);
+      } else {
+        userRetries.set(NomeContato, 1);
+      }
+
+      if (userRetries.get(NomeContato) > maxRetries) {
+        return res.json({
+          fulfillmentText: "Número máximo de tentativas atingido. Entre em contato com o suporte.",
+        });
+      }
+
       connection.query(
         queryVerificarCPF,
         [CPFContato],
@@ -54,13 +69,12 @@ app.post("/webhook", function (req, res) {
           if (error) {
             console.error("Erro ao verificar o CPF no banco de dados:", error);
             return res.json({
-              fulfillmentText:
-                "Erro ao verificar o CPF, por favor entre em contato com os desenvolvedores.",
+              fulfillmentText: "Erro ao verificar o CPF no banco de dados. Por favor, tente novamente.",
             });
           } else {
             if (results.length > 0) {
               return res.json({
-                fulfillmentText: "CPF já cadastrado na base de dados.",
+                fulfillmentText: "CPF já cadastrado na base de dados. Por favor, tente novamente.",
               });
             } else {
               const query = `INSERT INTO Cadastro (Nome, CPF) VALUES (?, ?)`;
@@ -73,10 +87,11 @@ app.post("/webhook", function (req, res) {
                     console.error("Erro ao inserir no banco de dados:", error);
                     return res.json({
                       fulfillmentText:
-                        "Erro ao cadastrar o usuário, por favor entre em contato com os desenvolvedores.",
+                        "Erro ao cadastrar o usuário. Por favor, tente novamente.",
                     });
                   } else {
                     console.log("Usuário cadastrado com sucesso.");
+                    userRetries.delete(NomeContato); // Limpa as tentativas para este usuário
                     return res.json({
                       fulfillmentText: "Usuário cadastrado com sucesso!",
                     });
@@ -91,7 +106,7 @@ app.post("/webhook", function (req, res) {
     } catch (error) {
       console.error('CPF inválido:', error.message);
       return res.json({
-        fulfillmentText: `CPF inválido: ${error.message}`,
+        fulfillmentText: `CPF inválido: ${error.message}. Por favor, tente novamente.`,
       });
     }
   }
