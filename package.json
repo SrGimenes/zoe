@@ -10,12 +10,13 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
+    "actions-on-google": "^3.0.0",
+    "axios": "^1.5.1",
     "body-parser": "^1.20.2",
     "dialogflow-fulfillment": "^0.6.1",
-    "actions-on-google": "^3.0.0",
+    "express": "^4.18.2",
     "mysql": "^2.18.1",
-    "axios": "^1.5.1"
+    "zod": "^3.22.4"
   },
   "engines": {
     "node": "14.x"
