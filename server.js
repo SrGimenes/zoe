@@ -13,8 +13,8 @@ app.get("/", function (request, response) {
   response.sendFile(__dirname + "/views/index.html");
 });
 
-const maxRetries = 2; // Número máximo de tentativas
-const userRetries = new Map(); // Mapa para rastrear as tentativas do usuário
+const maxRetries = 2;
+const userRetries = new Map();
 
 app.post("/webhook", function (req, res) {
   res.setTimeout(500000, function () {
@@ -33,18 +33,19 @@ app.post("/webhook", function (req, res) {
 
   const intentName = req.body.queryResult.intent.displayName;
 
-  const cpfSchema = z.string()
-    .refine((cpf) => /^[0-9]{11}$/.test(cpf), {
-      message: 'CPF inválido. Deve conter 11 dígitos numéricos.',
-    })
-    .refine((cpf) => !/[a-zA-Z]/.test(cpf), {
-      message: 'CPF inválido. Não deve conter letras.',
-      fulfillmentText: 'CPF inválido. Não deve conter letras.',
-    });
-
   if (intentName === "Default Welcome Intent - yes - yes - yes - yes - next") {
     const NomeContato = req.body.queryResult.parameters["Nome"];
     let CPFContato = req.body.queryResult.parameters["CPF"];
+
+    // Verifica se o CPF tem exatamente 11 dígitos numéricos
+    if (CPFContato.length !== 11 || !/^[0-9]+$/.test(CPFContato)) {
+      return res.json({
+        fulfillmentText: "CPF inválido. Deve conter 11 dígitos numéricos. Por favor, tente novamente.",
+      });
+    }
+
+    const cpfSchema = z.string()
+      .refine((cpf) => !/[a-zA-Z]/.test(cpf), 'CPF inválido. Não deve conter letras.');
 
     try {
       cpfSchema.parse(CPFContato); // Valida o CPF
@@ -92,7 +93,7 @@ app.post("/webhook", function (req, res) {
                     });
                   } else {
                     console.log("Usuário cadastrado com sucesso.");
-                    userRetries.delete(NomeContato); // Limpa as tentativas para este usuário
+                    userRetries.delete(NomeContato);
                     return res.json({
                       fulfillmentText: "Usuário cadastrado com sucesso!",
                     });
@@ -107,7 +108,7 @@ app.post("/webhook", function (req, res) {
     } catch (error) {
       console.error('CPF inválido:', error.message);
       return res.json({
-        fulfillmentText: `CPF inválido! ${error.message},Por favor, tente novamente.`,
+        fulfillmentText: `CPF inválido: ${error.message}. Por favor, tente novamente.`,
       });
     }
   }
