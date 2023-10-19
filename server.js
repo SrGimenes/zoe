@@ -40,7 +40,7 @@ app.post("/webhook", function (req, res) {
     // Verifica se o CPF tem exatamente 11 dígitos numéricos
     if (CPFContato.length !== 11 || !/^[0-9]+$/.test(CPFContato)) {
       return res.json({
-        fulfillmentText: "CPF inválido. Deve conter 11 dígitos numéricos. Por favor, tente novamente.",
+        fulfillmentText: "CPF inválido. Deve conter 11 dígitos numéricos. Por favor, tente novamente mais tarde.",
       });
     }
 
@@ -76,7 +76,7 @@ app.post("/webhook", function (req, res) {
           } else {
             if (results.length > 0) {
               return res.json({
-                fulfillmentText: "CPF já cadastrado na base de dados. Por favor, tente novamente.",
+                fulfillmentText: "CPF já cadastrado na base de dados. Vamos prossguir? \n Digite 3",
               });
             } else {
               const query = `INSERT INTO Cadastro (Nome, CPF) VALUES (?, ?)`;
@@ -95,7 +95,7 @@ app.post("/webhook", function (req, res) {
                     console.log("Usuário cadastrado com sucesso.");
                     userRetries.delete(NomeContato);
                     return res.json({
-                      fulfillmentText: "Usuário cadastrado com sucesso!",
+                      fulfillmentText: "Usuário cadastrado com sucesso! Vamos prosseguir? \n Digite 3",
                     });
                   }
                 }
