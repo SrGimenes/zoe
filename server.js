@@ -35,7 +35,7 @@ app.post("/webhook", function (req, res) {
 
   if (intentName === "Default Welcome Intent - yes - yes - yes - yes - next") {
     const NomeContato = req.body.queryResult.parameters["Nome"];
-    let CPFContato = req.body.queryResult.parameters["CPF"];
+    let CPFContato = req.body.queryResult.parameters["CPF"].toString();
 
     // Verifica se o CPF tem exatamente 11 dígitos numéricos
     if (CPFContato.length !== 11 || !/^[0-9]+$/.test(CPFContato)) {
