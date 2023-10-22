@@ -3,7 +3,7 @@ const app = express();
 const { WebhookClient } = require("dialogflow-fulfillment");
 const bodyParser = require("body-parser");
 const mysql = require("mysql");
-const { z } = require('zod');
+const { z } = require("zod");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -40,12 +40,17 @@ app.post("/webhook", function (req, res) {
     // Verifica se o CPF tem exatamente 11 dígitos numéricos
     if (CPFContato.length !== 11 || !/^[0-9]+$/.test(CPFContato)) {
       return res.json({
-        fulfillmentText: "CPF inválido. Deve conter 11 dígitos numéricos. Por favor, tente novamente mais tarde.",
+        fulfillmentText:
+          "CPF inválido. Deve conter 11 dígitos numéricos. Por favor, tente novamente mais tarde.",
       });
     }
 
-    const cpfSchema = z.string()
-      .refine((cpf) => !/[a-zA-Z]/.test(cpf), 'CPF inválido. Não deve conter letras.');
+    const cpfSchema = z
+      .string()
+      .refine(
+        (cpf) => !/[a-zA-Z]/.test(cpf),
+        "CPF inválido. Não deve conter letras."
+      );
 
     try {
       cpfSchema.parse(CPFContato); // Valida o CPF
@@ -60,7 +65,8 @@ app.post("/webhook", function (req, res) {
 
       if (userRetries.get(NomeContato) > maxRetries) {
         return res.json({
-          fulfillmentText: "Número máximo de tentativas atingido. Entre em contato com o suporte.",
+          fulfillmentText:
+            "Número máximo de tentativas atingido. Entre em contato com o suporte.",
         });
       }
 
@@ -71,12 +77,14 @@ app.post("/webhook", function (req, res) {
           if (error) {
             console.error("Erro ao verificar o CPF no banco de dados:", error);
             return res.json({
-              fulfillmentText: "Erro ao verificar o CPF no banco de dados. Por favor, tente novamente.",
+              fulfillmentText:
+                "Erro ao verificar o CPF no banco de dados. Por favor, tente novamente.",
             });
           } else {
             if (results.length > 0) {
               return res.json({
-                fulfillmentText: "CPF já cadastrado na base de dados. Vamos prossguir? \n Digite 3",
+                fulfillmentText:
+                  "CPF já cadastrado na base de dados. Vamos prossguir? \n Digite 3",
               });
             } else {
               const query = `INSERT INTO Usuario (Nome, CPF) VALUES (?, ?)`;
@@ -95,7 +103,8 @@ app.post("/webhook", function (req, res) {
                     console.log("Usuário cadastrado com sucesso.");
                     userRetries.delete(NomeContato);
                     return res.json({
-                      fulfillmentText: "Usuário cadastrado com sucesso! Vamos prosseguir? \n Digite 3",
+                      fulfillmentText:
+                        "Usuário cadastrado com sucesso! Vamos prosseguir? \n Digite 3",
                     });
                   }
                 }
@@ -106,13 +115,29 @@ app.post("/webhook", function (req, res) {
         }
       );
     } catch (error) {
-      console.error('CPF inválido:', error.message);
+      console.error("CPF inválido:", error.message);
       return res.json({
         fulfillmentText: `CPF inválido: ${error.message}. Por favor, tente novamente.`,
       });
     }
   }
 });
+
+if (
+  intentName === "Default Welcome Intent - yes - yes - yes - yes - next - more"
+) {
+  // Obter o valor do Nome do contexto
+  const NomeContato = req.body.queryResult.outputContexts.find(
+    (context) => context.name === "NomeContato"
+  );
+
+  if (NomeContato) {
+    const NomeArmazenado = NomeContato.parameters.Nome;
+    // Agora você pode usar a variável NomeArmazenado para acessar o Nome da primeira intenção.
+  }
+
+  // Resto do seu código...
+}
 
 const listener = app.listen(process.env.PORT, function () {
   console.log("Your app is listening on port " + listener.address().port);
