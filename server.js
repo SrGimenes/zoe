@@ -50,7 +50,7 @@ app.post("/webhook", function (req, res) {
     try {
       cpfSchema.parse(CPFContato); // Valida o CPF
 
-      const queryVerificarCPF = `SELECT CPF FROM Cadastro WHERE CPF = ?`;
+      const queryVerificarCPF = `SELECT CPF FROM Usuario WHERE CPF = ?`;
 
       if (userRetries.has(NomeContato)) {
         userRetries.set(NomeContato, userRetries.get(NomeContato) + 1);
@@ -79,7 +79,7 @@ app.post("/webhook", function (req, res) {
                 fulfillmentText: "CPF já cadastrado na base de dados. Vamos prossguir? \n Digite 3",
               });
             } else {
-              const query = `INSERT INTO Cadastro (Nome, CPF) VALUES (?, ?)`;
+              const query = `INSERT INTO Usuario (Nome, CPF) VALUES (?, ?)`;
 
               connection.query(
                 query,
