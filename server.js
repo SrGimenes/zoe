@@ -121,23 +121,21 @@ app.post("/webhook", function (req, res) {
       });
     }
   }
-});
 
-if (
-  intentName === "Default Welcome Intent - yes - yes - yes - yes - next - more"
-) {
-  // Obter o valor do Nome do contexto
-  const NomeContato = req.body.queryResult.outputContexts.find(
-    (context) => context.name === "NomeContato"
-  );
+  if (intentName === "Default Welcome Intent - yes - yes - yes - yes - next - next") {
+    // Obter o valor do Nome do contexto
+    const NomeContato = req.body.queryResult.outputContexts.find(
+      (context) => context.name === "NomeContato"
+    );
 
-  if (NomeContato) {
-    const NomeArmazenado = NomeContato.parameters.Nome;
-    // Agora você pode usar a variável NomeArmazenado para acessar o Nome da primeira intenção.
+    if (NomeContato) {
+      const NomeArmazenado = NomeContato.parameters.Nome;
+      // Agora você pode usar a variável NomeArmazenado para acessar o Nome da primeira intenção.
+    }
+
+    // Resto do seu código...
   }
-
-  // Resto do seu código...
-}
+});
 
 const listener = app.listen(process.env.PORT, function () {
   console.log("Your app is listening on port " + listener.address().port);
