@@ -84,7 +84,7 @@ app.post("/webhook", function (req, res) {
             if (results.length > 0) {
               return res.json({
                 fulfillmentText:
-                  "CPF já cadastrado na base de dados. Vamos prossguir? \n Digite 3",
+                  "Tudo certo, para prosseguir digite 3",
               });
             } else {
               const query = `INSERT INTO Usuario (Nome, CPF) VALUES (?, ?)`;
