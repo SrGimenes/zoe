@@ -57,7 +57,7 @@ app.post("/webhook", function (req, res) {
 
       const queryVerificarCPF = `SELECT CPF FROM Usuario WHERE CPF = ?`;
 
-      if (userRetries.has(NomeContato)) {
+      /*if (userRetries.has(NomeContato)) {
         userRetries.set(NomeContato, userRetries.get(NomeContato) + 1);
       } else {
         userRetries.set(NomeContato, 1);
@@ -68,7 +68,7 @@ app.post("/webhook", function (req, res) {
           fulfillmentText:
             "Número máximo de tentativas atingido. Entre em contato com o suporte.",
         });
-      }
+      }*/
 
       connection.query(
         queryVerificarCPF,
