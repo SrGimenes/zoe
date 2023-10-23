@@ -122,7 +122,8 @@ app.post("/webhook", function (req, res) {
     }
   }
 
-  if (intentName === "Default Welcome Intent - yes - yes - yes - yes - next - next") { 
+  
+  if (intentName === "Visualizar horário de aula") { 
     const NomeContato = req.body.queryResult.outputContexts.find(
       (context) => context.name === "NomeContato"
     );
