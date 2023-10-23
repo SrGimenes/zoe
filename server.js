@@ -108,22 +108,6 @@ app.post("/webhook", function (req, res) {
       });
     }
   }
-
-  
-if (intentName === "Visualizar horário de aula") {
-  return res.json({
-    fulfillmentMessages: [
-      {
-        text: {
-          text: [
-            "Segunda - Feira:\n18:50 - 19:40: EMPREENDEDORISMO E MARKETING (SIN8N-S)\n19:40 - 20:30: EMPREENDEDORISMO E MARKETING (SIN8N-S)\n20:30 - 21:20: TÓPICOS ESPECIAIS III (SIN8N-S)\n\nTerça - Feira:\n18:50 - 19:40: GERÊNCIA DE PROJETOS (SIN8N-S)\n19:40 - 20:30: GERÊNCIA DE PROJETOS (SIN8N-S)\n20:40 - 21:30: PROJETO INTEGRADOR VIII (SIN8N-S)\n21:30 - 22:20: PROJETO INTEGRADOR VIII (SIN8N-S)",
-          ],
-        },
-      },
-    ],
-  });
-}
-
 });
 
 const listener = app.listen(process.env.PORT, function () {
